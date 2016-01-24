@@ -18,6 +18,7 @@
 #import "JYPattern.h"
 #import "JYPatternSqlite.h"
 #import "STNewSceneController.h"
+#import "STEditSceneController.h"
 
 #define SCREEN_WIDTH self.view.frame.size.width
 #define SCREEN_HEIGHT self.view.frame.size.height
@@ -381,6 +382,7 @@
 
 - (void)leftBtnClicked
 {
+  //说明是从新建场景界面过来的
   if(self.sceneTag==40)
   {
       for (UIViewController *controller in self.navigationController.viewControllers) {
@@ -394,6 +396,19 @@
       }
       
   }
+//说明是从编辑场景界面过来的
+ else if(self.sceneTag==400)
+ {
+     for (UIViewController *controller in self.navigationController.viewControllers) {
+         
+         if ([controller isKindOfClass:[STEditSceneController class]]) {
+             
+             [self.navigationController popToViewController:controller animated:YES];
+             
+         }
+         
+     }
+ }
   else
   {
       for (UIViewController *controller in self.navigationController.viewControllers) {
@@ -410,6 +425,7 @@
 
 -(void)rightBtnClicked
 {
+    //说明是从新建场景界面过来的
     if(self.sceneTag==40)
     {
         NSLog(@"场景中电器自定义只需要返回参数值就行吧");
@@ -427,6 +443,26 @@
                 
             }
         }
+    }
+    //说明是从编辑场景过来的
+    else if(self.sceneTag==400)
+    {
+        NSLog(@"这里应该是要将RGB数值传递回编辑场景界面了");
+        if([self.delegate respondsToSelector:@selector(backParam:andParam2:andParam3:andLogic_Id:andType:)])
+        {
+            [self.delegate backParam:self.rValue.text andParam2:self.gValue.text andParam3:self.bValue.text andLogic_Id:self.logic_id andType:self.type];
+            
+            for (UIViewController *controller in self.navigationController.viewControllers) {
+                
+                if ([controller isKindOfClass:[STEditSceneController class]]) {
+                    
+                    [self.navigationController popToViewController:controller animated:YES];
+                    
+                }
+                
+            }
+        }
+
     }
     else
     {

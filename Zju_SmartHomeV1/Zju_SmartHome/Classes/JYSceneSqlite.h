@@ -54,6 +54,6 @@
 //根据区域和场景名称,修改场景背景图片
 -(void)updateRecordBKGInArea:(NSString *)area andInScene:(NSString *)scene withNewBKG:(NSString *)newBKG inTable:(NSString *)tableName;
 
-//根据区域和场景名称和电器逻辑id,修改电器的值
--(void)updateRecordParamInArea:(NSString *)area andInScene:(NSString *)scene andInLogicID:(NSString *)logic_id withNewP1:(NSString *)param1 withNewP2:(NSString *)param2 withNewP3:(NSString *)param3 inTable:(NSString *)tableName;
+//根据区域和场景名称和电器逻辑id,修改电器的值和场景名称
+-(void)updateRecordParamInArea:(NSString *)area andInScene:(NSString *)scene andInLogicID:(NSString *)logic_id withNewP1:(NSString *)param1 withNewP2:(NSString *)param2 withNewP3:(NSString *)param3 withNewScene:(NSString *)newSceneName inTable:(NSString *)tableName;
 @end

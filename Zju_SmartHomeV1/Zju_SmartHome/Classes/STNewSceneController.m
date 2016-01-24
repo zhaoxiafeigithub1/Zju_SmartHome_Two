@@ -242,7 +242,7 @@
         params[@"sceneconfig.param2"] = scene.param2;
         params[@"sceneconfig.param3"] = scene.param3;
         
-        //NSLog(@"1111 %@ %@ %@ %@ %@",scene.area,scene.name,scene.bkgName,scene.logic_id,scene.type);
+        NSLog(@"1111 %@ %@ %@ %@ %@",scene.area,scene.name,scene.bkgName,scene.logic_id,scene.type);
         
         //4.发送请求
         [mgr POST:@"http://60.12.220.16:8888/paladin/Sceneconfig/create" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject)

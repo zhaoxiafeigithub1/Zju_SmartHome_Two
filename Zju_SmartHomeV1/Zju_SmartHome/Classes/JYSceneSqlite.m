@@ -161,10 +161,11 @@
 }
 
 //根据指定区域,指定场景,指定逻辑id,修改电器的param
--(void)updateRecordParamInArea:(NSString *)area andInScene:(NSString *)scene andInLogicID:(NSString *)logic_id withNewP1:(NSString *)param1 withNewP2:(NSString *)param2 withNewP3:(NSString *)param3 inTable:(NSString *)tableName
+-(void)updateRecordParamInArea:(NSString *)area andInScene:(NSString *)scene andInLogicID:(NSString *)logic_id withNewP1:(NSString *)param1 withNewP2:(NSString *)param2 withNewP3:(NSString *)param3 withNewScene:(NSString *)newSceneName inTable:(NSString *)tableName
 {
     sqlite3_stmt *stmt = nil;
-    NSString *sql = [NSString stringWithFormat:@"update %@ set param1 = '%@',param2='%@',param3='%@' where area='%@' and scene = '%@' and logic_id='%@'",tableName,param1,param2,param3,area,scene,logic_id];
+    NSString *sql = [NSString stringWithFormat:@"update %@ set scene='%@',param1 = '%@',param2='%@',param3='%@' where area='%@' and scene = '%@' and logic_id='%@'",tableName,
+                    newSceneName,param1,param2,param3,area,scene,logic_id];
     
     if (sqlite3_prepare_v2(db, [sql UTF8String], -1, &stmt, NULL) == SQLITE_OK)
     {

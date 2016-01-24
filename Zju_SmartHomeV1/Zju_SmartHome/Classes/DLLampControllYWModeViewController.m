@@ -14,6 +14,7 @@
 #import "MBProgressHUD+MJ.h"
 #import "YSYWPatternViewController.h"
 #import "STNewSceneController.h"
+#import "STEditSceneController.h"
 #import "STNewSceneView.h"
 #import "JYPattern.h"
 #import "JYPatternSqlite.h"
@@ -585,6 +586,17 @@
          }
       }
   }
+  else if(self.sceneTag==411)
+  {
+      for (UIViewController *controller in self.navigationController.viewControllers)
+      {
+          
+          if ([controller isKindOfClass:[STEditSceneController class]])
+          {
+              [self.navigationController popToViewController:controller animated:YES];
+          }
+      }
+  }
   else
   {
       for (UIViewController *controller in self.navigationController.viewControllers)
@@ -607,6 +619,7 @@
     NSLog(@"===%@ %@",self.logic_id,string);
     NSLog(@"看看标志是啥:%d",self.sceneTag);
     
+    //说明是从新建场景界面过来的
     if(self.sceneTag==41)
     {
         if([self.delegate respondsToSelector:@selector(backParamYW:andParam2:andParam3:andLogic_Id:andType:)])
@@ -616,6 +629,25 @@
             for (UIViewController *controller in self.navigationController.viewControllers) {
                 
                 if ([controller isKindOfClass:[STNewSceneController class]]) {
+                    
+                    [self.navigationController popToViewController:controller animated:YES];
+                    
+                }
+                
+            }
+        }
+    }
+    //说明是从编辑场景界面过来的
+    else if(self.sceneTag==411)
+    {
+        NSLog(@"这里应该要将YW数值传递回编辑场景界面了");
+        if([self.delegate respondsToSelector:@selector(backParamYW:andParam2:andParam3:andLogic_Id:andType:)])
+        {
+            [self.delegate backParamYW:string andParam2:@"0" andParam3:@"0" andLogic_Id:self.logic_id andType:self.type];
+            
+            for (UIViewController *controller in self.navigationController.viewControllers) {
+                
+                if ([controller isKindOfClass:[STEditSceneController class]]) {
                     
                     [self.navigationController popToViewController:controller animated:YES];
                     
