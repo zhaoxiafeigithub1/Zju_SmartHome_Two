@@ -839,7 +839,7 @@ static BOOL _isPoping;
     {
         //按顺序取出从服务器返回的电器
         JYFurnitureBack *furnitureBack = self.furnitureBackStatus.furnitureArray[i];
-       // NSLog(@"从服务器返回电器的区域和名称:%@ %@",furnitureBack.scene_name,furnitureBack.name);
+        NSLog(@"从服务器返回电器的区域和名称:%@ %@",furnitureBack.scene_name,furnitureBack.name);
         //遍历头部区域数组
         int j = 0;
         for(j = 0; j < self.headerArray.count; j++)
@@ -847,7 +847,7 @@ static BOOL _isPoping;
             //如果电器的所属区域已存在于头部区域数组
             if ([furnitureBack.scene_name isEqualToString:self.headerArray[j]])
             {
-                NSLog(@"如果电器所属区域已存在于头部区域数组 %@",furnitureBack.scene_name);
+                //NSLog(@"如果电器所属区域已存在于头部区域数组 %@",furnitureBack.scene_name);
                 int k = 0;
                 //遍历电器描述文字
                 for(k = 0; k < self.descArray.count; k++)
@@ -937,11 +937,11 @@ static BOOL _isPoping;
         //电器的所属区域不存在于已有头部电器数组
         if(j>=self.headerArray.count)
         {
-           
-            NSLog(@"电器的所属区域不存在于已有的头部电器数组：%@",furnitureBack.scene_name);
+            NSLog(@"电器的所属区域不存在于已有头部数组");
+           // NSLog(@"电器的所属区域不存在于已有的头部电器数组：%@",furnitureBack.scene_name);
             if([furnitureBack.scene_name isEqualToString:@"-1"])
             {
-                // NSLog(@"12345678900000");
+                NSLog(@"说明此电器属于单品,没有区域概念");
             }
             else
             {
@@ -971,26 +971,22 @@ static BOOL _isPoping;
                 furniture.logic_id=furnitureBack.logic_id;
                 furniture.deviceType=furnitureBack.deviceType;
                 
+                //说明是RGB灯
                 if([furniture.deviceType isEqualToString:@"40"])
                 {
-                    NSLog(@"灯灯");
                     furniture.imageStr=self.imageHighArray[3];
-                    //furniture.controller=[[DLLampControlGuestModeViewController alloc]init];
                     YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];
-                    //vc.logic_id=furniture.logic_id;
-                    //vc.furnitureName=furniture.descLabel;
                     furniture.controller=vc;
                 }
+                //说明是YW灯
                 else if([furniture.deviceType isEqualToString:@"41"])
                 {
                     furniture.imageStr=self.imageHighArray[4];
-                    // furniture.controller=[[DLLampControllYWModeViewController alloc]init];
                     YSYWPatternViewController *vc=[[YSYWPatternViewController alloc]init];
-                    //vc.logic_id=furniture.logic_id;
-                    //vc.furnitureName=furniture.descLabel;
                     furniture.controller=vc;
                     
                 }
+                //说明是其他电器
                 else
                 {
                     furniture.imageStr=@"单品";
@@ -1000,9 +996,28 @@ static BOOL _isPoping;
                 int m=0;
                 for(m=0;m<self.descArray.count;m++)
                 {
-                    if([furniture.descLabel isEqualToString:self.descArray[m]]){ break; }
+                    if([furniture.descLabel isEqualToString:self.descArray[m]])
+                    {
+                        break;
+                    }
                 }
+                NSLog(@"看看这个m：%d",m);
+                NSLog(@"看看这个电器%@ %d",furniture.descLabel,furniture.registed);
+               
+                //初始化一个智能区域
+                JYFurnitureSection *furnitureSection=[[JYFurnitureSection alloc]init];
+                //设置智能区域的名称
+                furnitureSection.sectionName=furnitureBack.scene_name;
+                //设置智能区域的电器数组
+                furnitureSection.furnitureArray=self.furnitureArray;
+                //将智能区域添加到智能区域数组中
+                [self.furnitureSecArray addObject:furnitureSection];
+                [self.headerArray addObject:furnitureBack.scene_name];
                 
+                if(m<self.descArray.count)
+                {
+                    self.furnitureArray[m]=furniture;
+                }
                 if(m>=self.descArray.count)
                 {
                     JYFurniture *temp=[[JYFurniture alloc]init];
@@ -1012,15 +1027,15 @@ static BOOL _isPoping;
                     [self.furnitureArray addObject:furniture];
                     [self.furnitureArray addObject:temp];
                     
-                    //初始化一个智能区域
-                    JYFurnitureSection *furnitureSection=[[JYFurnitureSection alloc]init];
-                    //设置智能区域的名称
-                    furnitureSection.sectionName=furnitureBack.scene_name;
-                    //设置智能区域的电器数组
-                    furnitureSection.furnitureArray=self.furnitureArray;
-                    //将智能区域添加到智能区域数组中
-                    [self.furnitureSecArray addObject:furnitureSection];
-                    [self.headerArray addObject:furnitureBack.scene_name];
+//                    //初始化一个智能区域
+//                    JYFurnitureSection *furnitureSection=[[JYFurnitureSection alloc]init];
+//                    //设置智能区域的名称
+//                    furnitureSection.sectionName=furnitureBack.scene_name;
+//                    //设置智能区域的电器数组
+//                    furnitureSection.furnitureArray=self.furnitureArray;
+//                    //将智能区域添加到智能区域数组中
+//                    [self.furnitureSecArray addObject:furnitureSection];
+//                    [self.headerArray addObject:furnitureBack.scene_name];
                     
                     
                     //这里判断是否有注册的电器是默认图片的
@@ -1028,9 +1043,11 @@ static BOOL _isPoping;
                     //遍历电器描述文字
                     for(k=0;k<self.descArray.count;k++)
                     {
+                        //NSLog(@"服务器返回的电器名称 ：%@ %@",furnitureBack.name,self.descArray[k]);
                         //如果从服务器返回的电器与已有电器描述一致
                         if([furnitureBack.name isEqualToString:self.descArray[k]])
                         {
+                            NSLog(@"难道没有一致吗?");
                             //那就从self.furnitureSecArray中找到它
                             JYFurnitureSection *section=[self.furnitureSecArray objectAtIndex:j];
                             JYFurniture *furniture=[section.furnitureArray objectAtIndex:k];

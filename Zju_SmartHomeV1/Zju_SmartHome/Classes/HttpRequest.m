@@ -42,7 +42,7 @@
   if (app.isInternalNetworkGate)
   {
     //内网；
-    NSString *url  = [[NSString alloc] initWithFormat:@"http://%@/phone/getLogicIdfromMac.php",app.globalInternalIP];
+    NSString *url  = [[NSString alloc] initWithFormat:@"http://%@/iosphone/getLogicIdfromMac.php",app.globalInternalIP];
     
     [manager POST:url
        parameters:parameters
@@ -51,7 +51,7 @@
   }else{
     //外网；
     //默认使用外网；
-    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/phone/getLogicIdfromMac.php"
+    [manager POST:@"http://wanli.ngrok.joyingtec.com:8000/iosphone/getLogicIdfromMac.php"
        parameters:parameters
           success:success
           failure:failure];
@@ -88,11 +88,11 @@
     if (app.isInternalNetworkGate) {
         //内网；
         
-        NSLog(@"内网获取逻辑ID的IP：%@",[[NSString alloc] initWithFormat:@"http://%@/phone/background_music.php",app.globalInternalIP]);
+        NSLog(@"内网获取逻辑ID的IP：%@",[[NSString alloc] initWithFormat:@"http://%@/iosphone/background_music.php",app.globalInternalIP]);
         
         //NSString *url  = [[NSString alloc] initWithFormat:@"http://%@/phone/background_music.php",app.globalInternalIP];
         
-        [manager POST:@"http://%@/phone/background_music.php"
+        [manager POST:@"http://%@/iosphone/background_music.php"
            parameters:parameters
               success:success
               failure:failure];
@@ -101,7 +101,7 @@
         //外网；
         //默认使用外网；
         //http://test.ngrok.joyingtec.com:8000/phone/background_music.php
-        [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/phone/background_music.php"
+        [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/iosphone/background_music.php"
            parameters:parameters
               success:success
               failure:failure];
@@ -362,14 +362,14 @@
   
   if (app.isInternalNetworkGate) {
     //内网；
-    [manager POST:[[NSString alloc] initWithFormat:@"http://%@/phone/yw_light.php",app.globalInternalIP]
+    [manager POST:[[NSString alloc] initWithFormat:@"http://%@/iosphone/yw_light.php",app.globalInternalIP]
        parameters:parameters
           success:success
           failure:failure];
   }else{
     
     //外网；
-    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/phone/yw_light.php"
+    [manager POST:@"http://ike1.eurzhuoxin.science:8000/iosphone/yw_light.php"
        parameters:parameters
           success:success
           failure:failure];
@@ -407,13 +407,13 @@
   if (app.isInternalNetworkGate) {
     
     //内网；
-    [manager POST:[[NSString alloc] initWithFormat:@"http://%@/phone/yw_light.php",app.globalInternalIP]
+    [manager POST:[[NSString alloc] initWithFormat:@"http://%@/iosphone/yw_light.php",app.globalInternalIP]
        parameters:parameters
           success:success
           failure:failure];
   }else{
     //外网；
-    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/phone/yw_light.php"
+    [manager POST:@"http://ike1.eurzhuoxin.science:8000/iosphone/yw_light.php"
        parameters:parameters
           success:success
           failure:failure];
@@ -452,7 +452,7 @@
   if (app.isInternalNetworkGate) {
     
     //内网；
-    [manager POST:[[NSString alloc] initWithFormat:@"http://%@/phone/yw_light.php",app.globalInternalIP]
+    [manager POST:[[NSString alloc] initWithFormat:@"http://%@/iosphone/yw_light.php",app.globalInternalIP]
        parameters:parameters
           success:success
           failure:failure];
@@ -460,7 +460,7 @@
   }else{
     
     //外网
-    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/phone/yw_light.php"
+    [manager POST:@"http://ike1.eurzhuoxin.science:8000/iosphone/yw_light.php"
        parameters:parameters
           success:success
           failure:failure];
@@ -498,7 +498,7 @@
   if (app.isInternalNetworkGate) {
     //内网
     
-    [manager POST:[[NSString alloc] initWithFormat:@"http://%@/phone/color_light.php",app.globalInternalIP]
+    [manager POST:[[NSString alloc] initWithFormat:@"http://%@/iosphone/color_light.php",app.globalInternalIP]
        parameters:parameters
           success:success
           failure:failure];
@@ -506,7 +506,7 @@
   }else{
     
     //外网
-    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/phone/color_light.php"
+    [manager POST:@"http://ike1.eurzhuoxin.science:8000/iosphone/color_light.php"
        parameters:parameters
           success:success
           failure:failure];

@@ -703,7 +703,7 @@
      {
          NSLog(@"Success: %@ %@", responseObject,responseObject[@"msg"]);
          //更新图片到sqlite
-         //[self.jynewSqlite updateRecordByLogicID:self.logic_id andByName:pattern.name withNewBKG:imageName inTable:self.tableName];
+         [self.jySceneSqlite updateRecordBKGInArea:self.sectionName andInScene:scene.name withNewBKG:imageName inTable:self.tableName];
          //这里显示图片
          [self updateCellBackground:(int)self.selectedIndex];
          
@@ -1047,6 +1047,7 @@
             //NSLog(@"找到对应场景下的灯了，开始发送请求哦");
              NSLog(@"找到对应场景下的灯了：%@ %@ %@ %@ %@ %@ %@ %@",scene.area,scene.type, scene.name,scene.bkgName,scene.logic_id,scene.param1,scene.param2,scene.param3);
              [self.editFurnitureArray addObject:scene];
+            NSLog(@"??????????????");
             
 //            NSString *r = [NSString stringWithFormat:@"%@",[[NSString alloc] initWithFormat:@"%1x",[scene.param1 intValue]]];
 //            NSString *g = [NSString stringWithFormat:@"%@",[[NSString alloc] initWithFormat:@"%1x",[scene.param2 intValue]]];
