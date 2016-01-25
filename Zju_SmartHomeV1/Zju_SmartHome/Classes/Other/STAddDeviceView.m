@@ -30,6 +30,10 @@
     }
 }
 
-
+-(void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self.customName resignFirstResponder];
+    [self.mac resignFirstResponder];
+}
 
 @end

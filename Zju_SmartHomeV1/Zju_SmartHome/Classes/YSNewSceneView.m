@@ -24,4 +24,8 @@
     return newSceneView;
 }
 
+-(void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self.xinSceneName resignFirstResponder];
+}
 @end
