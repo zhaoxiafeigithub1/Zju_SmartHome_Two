@@ -15,6 +15,7 @@
 #import "DLLeftSlideMenuViewController.h"
 #import "RESideMenu.h"
 #import "CYFFurnitureViewController.h"
+#import "STNewfeatureController.h"
 #define appKey @"c879b326344c"
 #define appSecret @"82810facbfba262d63c14ed5dcc5998c"
 
@@ -58,7 +59,7 @@
    // JYNavigationController *navVc=[[JYNavigationController alloc]initWithRootViewController:jyVc];
     //self.window.rootViewController=navVc;
     
-    self.window.rootViewController=[[JYLoginViewController alloc]init];
+    self.window.rootViewController=[[STNewfeatureController alloc]init];
 
     //self.window.rootViewController=[[DLLampControlRGBModeViewController alloc]init];
     //}
