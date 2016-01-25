@@ -155,7 +155,7 @@
     failure:^(AFHTTPRequestOperation *operation, NSError *error)
    {
      [MBProgressHUD hideHUD];
-     [MBProgressHUD showError:@"修改失败"];
+     [MBProgressHUD showError:@"修改失败,请检查服务器"];
      
    }];
   

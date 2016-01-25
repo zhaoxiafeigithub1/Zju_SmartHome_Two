@@ -685,110 +685,122 @@ static BOOL _isPoping;
              
              //这里需要进行XML解析；
              LogicIdXMLParser *logicIdXMLParser = [[LogicIdXMLParser alloc] initWithXMLString:result];
-             
              //成功接收；
              
              if([logicIdXMLParser.result isEqualToString:@"fail"])
              {
                  //NSLog(@"注册电器失败");
-                 [MBProgressHUD showError:@"设备注册失败"];
+                 [MBProgressHUD hideHUD];
+                 [MBProgressHUD showError:@"获取逻辑ID失败"];
              }
              else
              {
                  //开始向服务器注册该电器；
                  [HttpRequest registerDeviceToServer:logicIdXMLParser.logicId deviceName:deviceName sectionName:self.area type:logicIdXMLParser.deviceType success:^(AFHTTPRequestOperation *operation, id responseObject)
                   {
-                     [self.addDeviceView removeFromSuperview];
-                     
-                     if(self.row < 5)
-                     {
-                         JYFurnitureSection *section = self.furnitureSecArray[self.section1];
-                         JYFurniture *furniture = section.furnitureArray[self.row];
-                         
-                         furniture.imageStr = self.imageHighArray[self.row];
-                         furniture.registed = YES;
-                         furniture.logic_id = logicIdXMLParser.logicId;
-                         furniture.deviceType = logicIdXMLParser.deviceType;
-                         
-                         if([furniture.deviceType isEqualToString:@"40"])
-                         {
+                      NSLog(@"%@",responseObject);
+                     NSString *string=[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+                      NSLog(@"%@",string);
+                      if([string isEqualToString:@"302"])
+                      {
+                          [MBProgressHUD hideHUD];
+                          [MBProgressHUD showError:@"此场景在其他模块已经存在，请先删除再添加"];
+                      }
+                      else
+                      {
+                          [self.addDeviceView removeFromSuperview];
+                          
+                          if(self.row < 5)
+                          {
+                              JYFurnitureSection *section = self.furnitureSecArray[self.section1];
+                              JYFurniture *furniture = section.furnitureArray[self.row];
+                              
+                              furniture.imageStr = self.imageHighArray[self.row];
+                              furniture.registed = YES;
+                              furniture.logic_id = logicIdXMLParser.logicId;
+                              furniture.deviceType = logicIdXMLParser.deviceType;
+                              
+                              if([furniture.deviceType isEqualToString:@"40"])
+                              {
+                                  
+                                  YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];
+                                  //vc.logic_id=furniture.logic_id;
+                                  //vc.furnitureName=furniture.descLabel;
+                                  furniture.controller=vc;
+                              }
+                              else if([furniture.deviceType isEqualToString:@"41"])
+                              {
+                                  // furniture.controller = [[DLLampControllYWModeViewController alloc]init];
+                                  YSYWPatternViewController *vc=[[YSYWPatternViewController alloc]init];
+                                  furniture.controller=vc;
+                              }
+                              else
+                              {
+                                  furniture.controller = [[JYOtherViewController alloc]init];
+                              }
+                          }
+                          else
+                          {
+                              JYFurniture *furniture = [[JYFurniture alloc]init];
+                              furniture.descLabel = deviceName;
+                              furniture.registed = YES;
+                              furniture.logic_id = logicIdXMLParser.logicId;
+                              furniture.deviceType = logicIdXMLParser.deviceType;
+                              
+                              
+                              if([furniture.deviceType isEqualToString:@"40"])
+                              {
+                                  furniture.imageStr = self.imageHighArray[3];
+                                  
+                                  YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];
+                                  vc.logic_id=furniture.logic_id;
+                                  vc.furnitureName=furniture.descLabel;
+                                  furniture.controller = vc;
+                              }
+                              else if([furniture.deviceType isEqualToString:@"41"])
+                              {
+                                  furniture.imageStr = self.imageHighArray[4];
+                                  YSYWPatternViewController *vc=[[YSYWPatternViewController alloc]init];
+                                  vc.logic_id=furniture.logic_id;
+                                  vc.furnitureName=furniture.descLabel;
+                                  furniture.controller=vc;
+                                  
+                              }
+                              else
+                              {
+                                  furniture.imageStr = @"办公室";
+                                  furniture.controller = [[JYOtherViewController alloc]init];
+                              }
+                              
+                              if(![self.addDeviceView.mac.text isEqualToString:@""])
+                              {
+                                  JYFurnitureSection *section = self.furnitureSecArray[self.section1];
+                                  JYFurniture *furniture1 = section.furnitureArray[self.row];
+                                  furniture1 = furniture;
+                                  JYFurniture *temp = [section.furnitureArray lastObject];
+                                  [section.furnitureArray removeLastObject];
+                                  [section.furnitureArray addObject:furniture1];
+                                  [section.furnitureArray addObject:temp];
+                              }
+                              else
+                              {
+                                  JYFurniture *temp = [self.section.furnitureArray lastObject];
+                                  [self.section.furnitureArray removeLastObject];
+                                  [self.section.furnitureArray addObject:furniture];
+                                  [self.section.furnitureArray addObject:temp];
+                              }
+                          }
+                          self.navigationController.navigationBar.hidden=NO;
+                          [self.collectionView reloadData];
+                          [MBProgressHUD showSuccess:@"设备注册成功"];
+                          
 
-                             YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];
-                             //vc.logic_id=furniture.logic_id;
-                             //vc.furnitureName=furniture.descLabel;
-                             furniture.controller=vc;
-                         }
-                         else if([furniture.deviceType isEqualToString:@"41"])
-                         {
-                            // furniture.controller = [[DLLampControllYWModeViewController alloc]init];
-                             YSYWPatternViewController *vc=[[YSYWPatternViewController alloc]init];
-                             furniture.controller=vc;
-                         }
-                         else
-                         {
-                             furniture.controller = [[JYOtherViewController alloc]init];
-                         }
-                     }
-                     else
-                     {
-                         JYFurniture *furniture = [[JYFurniture alloc]init];
-                         furniture.descLabel = deviceName;
-                         furniture.registed = YES;
-                         furniture.logic_id = logicIdXMLParser.logicId;
-                         furniture.deviceType = logicIdXMLParser.deviceType;
-                         
-                         
-                         if([furniture.deviceType isEqualToString:@"40"])
-                         {
-                             furniture.imageStr = self.imageHighArray[3];
-                             
-                             YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];
-                             vc.logic_id=furniture.logic_id;
-                             vc.furnitureName=furniture.descLabel;
-                             furniture.controller = vc;
-                         }
-                         else if([furniture.deviceType isEqualToString:@"41"])
-                         {
-                             furniture.imageStr = self.imageHighArray[4];
-                             YSYWPatternViewController *vc=[[YSYWPatternViewController alloc]init];
-                             vc.logic_id=furniture.logic_id;
-                             vc.furnitureName=furniture.descLabel;
-                             furniture.controller=vc;
-
-                         }
-                         else
-                         {
-                             furniture.imageStr = @"办公室";
-                             furniture.controller = [[JYOtherViewController alloc]init];
-                         }
-                         
-                         if(![self.addDeviceView.mac.text isEqualToString:@""])
-                         {
-                             JYFurnitureSection *section = self.furnitureSecArray[self.section1];
-                             JYFurniture *furniture1 = section.furnitureArray[self.row];
-                             furniture1 = furniture;
-                             JYFurniture *temp = [section.furnitureArray lastObject];
-                             [section.furnitureArray removeLastObject];
-                             [section.furnitureArray addObject:furniture1];
-                             [section.furnitureArray addObject:temp];
-                         }
-                         else
-                         {
-                             JYFurniture *temp = [self.section.furnitureArray lastObject];
-                             [self.section.furnitureArray removeLastObject];
-                             [self.section.furnitureArray addObject:furniture];
-                             [self.section.furnitureArray addObject:temp];
-                         }
-                     }
-                    self.navigationController.navigationBar.hidden=NO;
-                     [self.collectionView reloadData];
-                      [MBProgressHUD showSuccess:@"设备注册成功"];
-
-                     
+                      }
+                      
                  } failure:^(AFHTTPRequestOperation *operation, NSError *error)
                   {
                       [MBProgressHUD hideHUD];
-                      [MBProgressHUD showError:@"设备注册失败"];
+                      [MBProgressHUD showError:@"设备注册失败,请检查服务器"];
                        self.navigationController.navigationBar.hidden=NO;
                   }];
              }
@@ -827,6 +839,7 @@ static BOOL _isPoping;
     {
         //按顺序取出从服务器返回的电器
         JYFurnitureBack *furnitureBack = self.furnitureBackStatus.furnitureArray[i];
+       // NSLog(@"从服务器返回电器的区域和名称:%@ %@",furnitureBack.scene_name,furnitureBack.name);
         //遍历头部区域数组
         int j = 0;
         for(j = 0; j < self.headerArray.count; j++)
@@ -834,6 +847,7 @@ static BOOL _isPoping;
             //如果电器的所属区域已存在于头部区域数组
             if ([furnitureBack.scene_name isEqualToString:self.headerArray[j]])
             {
+                NSLog(@"如果电器所属区域已存在于头部区域数组 %@",furnitureBack.scene_name);
                 int k = 0;
                 //遍历电器描述文字
                 for(k = 0; k < self.descArray.count; k++)
@@ -924,7 +938,7 @@ static BOOL _isPoping;
         if(j>=self.headerArray.count)
         {
            
-            NSLog(@"---%@",furnitureBack.scene_name);
+            NSLog(@"电器的所属区域不存在于已有的头部电器数组：%@",furnitureBack.scene_name);
             if([furnitureBack.scene_name isEqualToString:@"-1"])
             {
                 // NSLog(@"12345678900000");
@@ -959,6 +973,7 @@ static BOOL _isPoping;
                 
                 if([furniture.deviceType isEqualToString:@"40"])
                 {
+                    NSLog(@"灯灯");
                     furniture.imageStr=self.imageHighArray[3];
                     //furniture.controller=[[DLLampControlGuestModeViewController alloc]init];
                     YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];

@@ -37,8 +37,7 @@
   if (![str  isEqual: @""]) {
     
     if ([self.nodeName isEqualToString:@"logic_id"]) {
-      
-      
+
       self.logicId = str;
     }else if ([self.nodeName isEqualToString:@"type"]){
       self.deviceType = str;
@@ -46,12 +45,8 @@
       else if([self.nodeName isEqualToString:@"message"])
       {
           self.result=str;
-          
-          NSLog(@",,,,,,,%@",str);
       }
-          
   }
-  
 }
 
 @end

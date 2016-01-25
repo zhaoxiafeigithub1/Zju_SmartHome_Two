@@ -36,4 +36,8 @@
         [self.delegate saveNewScene:self.sceneName.text];
     }
 }
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    
+    [self.sceneName resignFirstResponder];
+}
 @end

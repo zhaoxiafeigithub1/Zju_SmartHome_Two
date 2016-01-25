@@ -268,7 +268,6 @@
         //4.发送请求
         [mgr POST:@"http://60.12.220.16:8888/paladin/Sceneconfig/find" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject)
          {
-             
              YSSceneBackStatus *backStatus = [YSSceneBackStatus statusWithDict:responseObject];
              for(int i = 0; i < backStatus.sceneArray.count; i++)
              {

@@ -355,34 +355,44 @@ static BOOL _isPoping;
                      //向服务器注册单品电器
                      [HttpRequest registerDeviceToServerProduct:logicIdXMLParser.logicId deviceName:deviceName type:logicIdXMLParser.deviceType success:^(AFHTTPRequestOperation *operation, id responseObject)
                       {
-                          [self.addDeviceView removeFromSuperview];
-                          
-                          JYFurniture *furniture=[[JYFurniture alloc]init];
-                          furniture.descLabel=deviceName;
-                          furniture.registed=YES;
-                          furniture.logic_id=logicIdXMLParser.logicId;
-                          furniture.deviceType=logicIdXMLParser.deviceType;
-                          
-                          if([furniture.deviceType isEqualToString:@"40"])
-                          {
-                              furniture.imageStr=self.imageDic[@(RGBLIGHT_ON)];
-                          }
-                          else if([furniture.deviceType isEqualToString:@"41"])
-                          {
-                              furniture.imageStr=self.imageDic[@(YWLIGHT_ON)];
-                          }
+
+                         NSString *string=[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
+                        if([string isEqualToString:@"302"])
+                        {
+                            [MBProgressHUD showError:@"此电器在其他模块已经存在，请先删除再添加"];
+                         }
                           else
                           {
-                              furniture.imageStr=@"办公室";
+                              [self.addDeviceView removeFromSuperview];
+                              JYFurniture *furniture=[[JYFurniture alloc]init];
+                              furniture.descLabel=deviceName;
+                              furniture.registed=YES;
+                              furniture.logic_id=logicIdXMLParser.logicId;
+                              furniture.deviceType=logicIdXMLParser.deviceType;
+                              
+                              if([furniture.deviceType isEqualToString:@"40"])
+                              {
+                                  furniture.imageStr=self.imageDic[@(RGBLIGHT_ON)];
+                              }
+                              else if([furniture.deviceType isEqualToString:@"41"])
+                              {
+                                  furniture.imageStr=self.imageDic[@(YWLIGHT_ON)];
+                              }
+                              else
+                              {
+                                  furniture.imageStr=@"办公室";
+                              }
+                              JYFurniture *temp=[self.products lastObject];
+                              [self.products removeLastObject];
+                              [self.products addObject:furniture];
+                              [self.products addObject:temp];
+                              [self.collectionView reloadData];
+                              [MBProgressHUD hideHUD];
+                              [MBProgressHUD showSuccess:@"设备注册成功"];
+                              self.navigationController.navigationBar.hidden=NO;
+
+                              
                           }
-                          JYFurniture *temp=[self.products lastObject];
-                          [self.products removeLastObject];
-                          [self.products addObject:furniture];
-                          [self.products addObject:temp];
-                          [self.collectionView reloadData];
-                          [MBProgressHUD hideHUD];
-                          [MBProgressHUD showSuccess:@"设备注册成功"];
-                          self.navigationController.navigationBar.hidden=NO;
                           
                       } failure:^(AFHTTPRequestOperation *operation, NSError *error)
                       {
