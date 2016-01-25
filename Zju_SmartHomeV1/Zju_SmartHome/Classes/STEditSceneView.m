@@ -19,4 +19,8 @@
     return editSceneView;
 }
 
+-(void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self.sceneName resignFirstResponder];
+}
 @end
