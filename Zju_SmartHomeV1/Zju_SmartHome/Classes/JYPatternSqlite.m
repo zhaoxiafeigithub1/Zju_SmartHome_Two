@@ -119,7 +119,9 @@
 //获取指定逻辑id的所有数据
 -(void)getAllRecordFromTable:(NSString *)tableName ByLogic_id:(NSString *)logic_id
 {
+    NSLog(@"???,,,,,");
     NSString *sql=[NSString stringWithFormat:@"SELECT * FROM %@ where logic_id='%@'" ,tableName,logic_id];
+    NSLog(@"打印sql语句:%@",sql);
     sqlite3_stmt *statement;
     
     if(sqlite3_prepare_v2(db, [sql UTF8String], -1, &statement, nil)==SQLITE_OK)

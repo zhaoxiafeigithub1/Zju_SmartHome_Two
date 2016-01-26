@@ -90,7 +90,7 @@
     AppDelegate *appDelegate=(AppDelegate *)[[UIApplication sharedApplication]delegate];
     //专门存储模式的表
     self.tableName=[NSString stringWithFormat:@"patternTable%@",appDelegate.user_id];
-    NSLog(@"看看表明%@",self.tableName);
+    NSLog(@"看看表明%@ %@",self.tableName,self.logic_id);
     
     [self setNaviBarItemButton];
     

@@ -20,6 +20,9 @@
 #import "JYUpdateFurnitureName.h"
 #import "YSRGBPatternViewController.h"
 #import "YSYWPatternViewController.h"
+#import "AppDelegate.h"
+#import "JYPatternSqlite.h"
+#import "YSScene.h"
 
 #define UISCREEN_WIDTH ([[UIScreen mainScreen] bounds].size.width)
 #define UISCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
@@ -72,6 +75,10 @@ NS_ENUM(NSInteger, ProductType)
 
 @property (nonatomic,assign)NSInteger updaterow;
 
+//表名
+@property(nonatomic,copy)NSString *tableName;
+//模式数组
+@property(nonatomic,strong)NSMutableArray *patterns;
 @end
 
 @implementation YSProductViewController
@@ -131,6 +138,12 @@ NS_ENUM(NSInteger, ProductType)
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //用户注册一个电器后,又删除该电器,就把该电器的模式全部从缓存中删除
+    AppDelegate *appDelegate=(AppDelegate *)[[UIApplication sharedApplication]delegate];
+    //专门存储模式的表
+    self.tableName=[NSString stringWithFormat:@"patternTable%@",appDelegate.user_id];
+    NSLog(@"看看表名%@",self.tableName);
     
     //进行CollectionView和Cell的绑定
     [self.collectionView registerClass:[YSProductViewCell class] forCellWithReuseIdentifier:@"YSProductViewCell"];
@@ -694,6 +707,23 @@ static BOOL _isPoping;
         [self.products removeObject:furniture];
         [MBProgressHUD showSuccess:@"删除设备成功"];
         [self rightBtnClicked];
+        
+        JYPatternSqlite *jysqlite=[[JYPatternSqlite alloc]init];
+        jysqlite.patterns=[[NSMutableArray alloc]init];
+        [jysqlite getAllRecordFromTable:self.tableName ByLogic_id:furniture.logic_id];
+        self.patterns=jysqlite.patterns;
+        NSLog(@"看看表名和逻辑ID:%@ %@",self.tableName,furniture.logic_id);
+        NSLog(@"看看模式长度:%ld",self.patterns.count);
+        if (self.patterns.count!=0)
+        {
+            for (int i=0; i<self.patterns.count; i++)
+            {
+                YSScene *scene=self.patterns[i];
+                NSLog(@"%@",scene.name);
+                [jysqlite deleteRecordWithLogicID:furniture.logic_id andWithName:scene.name inTable:self.tableName];
+            }
+            
+        }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [MBProgressHUD showError:@"删除设备失败"];
