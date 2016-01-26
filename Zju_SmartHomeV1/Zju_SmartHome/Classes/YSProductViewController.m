@@ -338,9 +338,17 @@ static BOOL _isPoping;
 //添加设备
 -(void)next:(NSString *)deviceName and:(NSString *)deviceMac
 {
-    if([deviceMac isEqualToString:@""])
+    if([deviceName isEqualToString:@""])
+    {
+         [MBProgressHUD showError:@"请输入设备名称"];
+    }
+    else if([deviceMac isEqualToString:@""])
     {
         [MBProgressHUD showError:@"Mac值不能为空"];
+    }
+    else if([deviceName isEqualToString:@""]&&[deviceMac isEqualToString:@""])
+    {
+        [MBProgressHUD showError:@"请输入名称和Mac值"];
     }
     else
     {
@@ -359,7 +367,7 @@ static BOOL _isPoping;
              if([logicIdXMLParser.result isEqualToString:@"fail"])
              {
                  [MBProgressHUD hideHUD];
-                 [MBProgressHUD showError:@"设备注册失败"];
+                 [MBProgressHUD showError:@"设备注册失败,请检查网关"];
              }
              else
              {

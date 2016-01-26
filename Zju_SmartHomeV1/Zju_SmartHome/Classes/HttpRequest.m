@@ -51,7 +51,7 @@
   }else{
     //外网；
     //默认使用外网；
-    [manager POST:@"http://wanli.ngrok.joyingtec.com:8000/iosphone/getLogicIdfromMac.php"
+    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/iosphone/getLogicIdfromMac.php"
        parameters:parameters
           success:success
           failure:failure];
