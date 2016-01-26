@@ -45,7 +45,7 @@
   loginXib.password.delegate=self;
   loginXib.username.delegate=self;
   self.view=loginXib;
-  
+    [loginXib.delegate loginGoGoGo:@"123456" and:@"123456"];
   
 }
 

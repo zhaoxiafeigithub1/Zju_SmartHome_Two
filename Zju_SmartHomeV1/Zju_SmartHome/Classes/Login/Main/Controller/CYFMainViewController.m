@@ -39,6 +39,10 @@
 
 @property (nonatomic,strong)NSArray *imageNames;
 @property(nonatomic,strong)NSArray *descArray;
+@property(nonatomic,strong)NSString *cityPinyin;
+@property(nonatomic,strong)NSString *temp;
+@property(nonatomic,strong)NSString *weather;
+
 @end
 
 @implementation CYFMainViewController
@@ -367,11 +371,55 @@
       NSString *city = [[placemark addressDictionary] objectForKey:@"City"];
       NSString *country = [[placemark addressDictionary] objectForKey:@"Country"];
       
-      self.homeView.cityLabel.text = [NSString stringWithFormat:@"%@，",city];
+      self.homeView.cityLabel.text = [NSString stringWithFormat:@"%@,",city];
       self.homeView.countryLabel.text = country;
+      [self forecastWeatherByCity];
     }
     
   }];
+}
+//天气预报
+-(void)forecastWeatherByCity
+{
+    NSMutableString *cityStr = [NSMutableString stringWithFormat:@"%@",self.homeView.cityLabel.text];
+    NSString *newStr = [cityStr stringByReplacingOccurrencesOfString:@"市," withString:@""];
+    if (newStr.length) {
+        NSMutableString *ms = [[NSMutableString alloc]initWithString:newStr];
+        if (CFStringTransform((__bridge CFMutableStringRef)ms, 0, kCFStringTransformMandarinLatin, NO)) {
+            
+        }
+        if (CFStringTransform((__bridge CFMutableStringRef)ms, 0, kCFStringTransformStripDiacritics, NO)) {
+            
+        }
+        self.cityPinyin = [ms stringByReplacingOccurrencesOfString:@" " withString:@""];
+        
+    }
+    NSLog(@"%@----",newStr);
+    [self request:@"http://apis.baidu.com/apistore/weatherservice/weather" withHttpArg:[NSString stringWithFormat:@"citypinyin=%@",self.cityPinyin]];
+}
+-(void)request: (NSString*)httpUrl withHttpArg: (NSString*)HttpArg  {
+    NSString *urlStr = [[NSString alloc]initWithFormat: @"%@?%@", httpUrl, HttpArg];
+    NSURL *url = [NSURL URLWithString: urlStr];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL: url cachePolicy: NSURLRequestUseProtocolCachePolicy timeoutInterval: 10];
+    [request setHTTPMethod: @"GET"];
+    [request addValue: @"9c66d54e170b79b2dd7a1db34b8bf606" forHTTPHeaderField: @"apikey"];
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error == nil) {
+            NSMutableDictionary *dataDic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+           // NSLog(@"%@",dataDic);
+            NSDictionary *retDic = dataDic[@"retData"];
+            self.temp = [NSString stringWithFormat:@"%@",retDic[@"temp"]];
+            self.weather = [NSString stringWithFormat:@"%@",retDic[@"weather"]];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                
+                self.homeView.weatherLabel.text = [NSString stringWithFormat:@"天气:%@  温度:%@",self.weather,self.temp];
+                
+            });            }
+    }];
+    [task resume];
+    
 }
 
 -(void)officeLabelTap

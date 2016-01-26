@@ -919,6 +919,7 @@
     }
 }
 
+//滑动超级快
 -(void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
     if (targetContentOffset->x >= (self.scenesOnly.count - 1) * self.cellWidth)
