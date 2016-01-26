@@ -182,7 +182,7 @@
     
 }
 
-//获取指定区域的值
+//获取指定区域的所有数据
 -(void)getAllRecordFromTable:(NSString *)tableName ByArea:(NSString *)area
 {
     NSString *sql=[NSString stringWithFormat:@"SELECT * FROM %@ where area='%@'" ,tableName,area];
@@ -250,6 +250,59 @@
             [self.patterns addObject:ysScene];
         }
     }
+}
+
+//获取指定区域指定逻辑ID的所有数据
+-(void)getAllRecordFromTable:(NSString *)tableName ByArea:(NSString *)area ByLogicID:(NSString *)logic_id
+{
+    NSString *sql=[NSString stringWithFormat:@"SELECT * FROM %@ where area='%@' and logic_id＝'%@'" ,tableName,area,logic_id];
+    NSLog(@"%@",sql);
+    
+    sqlite3_stmt *statement;
+    
+    if(sqlite3_prepare_v2(db, [sql UTF8String], -1, &statement, nil)==SQLITE_OK)
+    {
+        while (sqlite3_step(statement)==SQLITE_ROW)
+        {
+            char *area1=(char *)sqlite3_column_text(statement, 0);
+            NSString *area=[[NSString alloc]initWithUTF8String:area1];
+            
+            char *scene1=(char *)sqlite3_column_text(statement, 1);
+            NSString *scene=[[NSString alloc]initWithUTF8String:scene1];
+            
+            char *bkgName1=(char *)sqlite3_column_text(statement, 2);
+            NSString *bkgName=[[NSString alloc]initWithUTF8String:bkgName1];
+            
+            char *logic_id1 =(char *)sqlite3_column_text(statement, 3);
+            NSString *logic_id=[[NSString alloc]initWithUTF8String:logic_id1];
+            
+            char *type1 =(char *)sqlite3_column_text(statement, 4);
+            NSString *type=[[NSString alloc]initWithUTF8String:type1];
+            
+            char *param11 =(char *)sqlite3_column_text(statement, 5);
+            NSString *param1=[[NSString alloc]initWithUTF8String:param11];
+            
+            char *param22 =(char *)sqlite3_column_text(statement, 6);
+            NSString *param2=[[NSString alloc]initWithUTF8String:param22];
+            
+            char *param33 =(char *)sqlite3_column_text(statement, 7);
+            NSString *param3=[[NSString alloc]initWithUTF8String:param33];
+            
+            
+            YSScene *ysScene=[[YSScene alloc]init];
+            ysScene.area=area;
+            ysScene.name=scene;
+            ysScene.bkgName=bkgName;
+            ysScene.logic_id=logic_id;
+            ysScene.type=type;
+            ysScene.param1=param1;
+            ysScene.param2=param2;
+            ysScene.param3=param3;
+            
+            [self.patterns addObject:ysScene];
+        }
+    }
     
 }
+
 @end

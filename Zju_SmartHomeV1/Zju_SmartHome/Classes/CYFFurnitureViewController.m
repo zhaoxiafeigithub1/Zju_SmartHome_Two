@@ -309,7 +309,7 @@ static BOOL _isPoping;
         JYFurnitureSection *section=self.furnitureSecArray[i];
         if([view.title.text isEqualToString:section.sectionName])
         {
-            NSLog(@"看看点中的是哪个头部%@",section.sectionName);
+           // NSLog(@"看看点中的是哪个头部%@",section.sectionName);
             for(int j=0;j<section.furnitureArray.count;j++)
             {
                 JYFurniture *furniture=section.furnitureArray[j];
@@ -321,6 +321,9 @@ static BOOL _isPoping;
             }
         }
     }
+    //将该区域电器数组中的最后一个电器逻辑ID传递过去
+    JYFurniture *fu=[svc.furnitureArray lastObject];
+    svc.logic_id=fu.logic_id;
     [self.navigationController pushViewController:svc animated:YES];
 }
 
@@ -468,10 +471,6 @@ static BOOL _isPoping;
             //设备为RGB灯，则进入RGB控制界面
             if([furniture.deviceType isEqualToString:@"40"])
             {
-               
-//                DLLampControlGuestModeViewController *dlVc = (DLLampControlGuestModeViewController *)furniture.controller;
-//                NSLog(@"%@",dlVc);
-//                dlVc.logic_id = furniture.logic_id;
                 YSRGBPatternViewController *vc=(YSRGBPatternViewController *)furniture.controller;
                 vc.logic_id=furniture.logic_id;
                 vc.room_name=section.sectionName;
@@ -482,14 +481,13 @@ static BOOL _isPoping;
             //设备为YW灯，则进入YW控制界面
             else if([furniture.deviceType isEqualToString:@"41"])
             {
-//                DLLampControllYWModeViewController *cyfVc = (DLLampControllYWModeViewController *)furniture.controller;
-                //cyfVc.logic_id=furniture.logic_id;
                 YSYWPatternViewController *vc=(YSYWPatternViewController *)furniture.controller;
                 vc.logic_id=furniture.logic_id;
                 vc.room_name=section.sectionName;
                 vc.furnitureName=furniture.descLabel;
                 [self.navigationController pushViewController:vc animated:YES];
             }
+            //其他设备,留待以后处理
             else
             {
                 JYOtherViewController *jyVc = (JYOtherViewController *)furniture.controller;
@@ -691,7 +689,7 @@ static BOOL _isPoping;
              {
                  //NSLog(@"注册电器失败");
                  [MBProgressHUD hideHUD];
-                 [MBProgressHUD showError:@"获取逻辑ID失败"];
+                 [MBProgressHUD showError:@"获取逻辑ID失败,请检查网关"];
              }
              else
              {
@@ -704,7 +702,7 @@ static BOOL _isPoping;
                       if([string isEqualToString:@"302"])
                       {
                           [MBProgressHUD hideHUD];
-                          [MBProgressHUD showError:@"此场景在其他模块已经存在，请先删除再添加"];
+                          [MBProgressHUD showError:@"此设备已经存在"];
                       }
                       else
                       {
@@ -724,13 +722,10 @@ static BOOL _isPoping;
                               {
                                   
                                   YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];
-                                  //vc.logic_id=furniture.logic_id;
-                                  //vc.furnitureName=furniture.descLabel;
                                   furniture.controller=vc;
                               }
                               else if([furniture.deviceType isEqualToString:@"41"])
                               {
-                                  // furniture.controller = [[DLLampControllYWModeViewController alloc]init];
                                   YSYWPatternViewController *vc=[[YSYWPatternViewController alloc]init];
                                   furniture.controller=vc;
                               }
@@ -793,8 +788,6 @@ static BOOL _isPoping;
                           self.navigationController.navigationBar.hidden=NO;
                           [self.collectionView reloadData];
                           [MBProgressHUD showSuccess:@"设备注册成功"];
-                          
-
                       }
                       
                  } failure:^(AFHTTPRequestOperation *operation, NSError *error)
@@ -819,7 +812,7 @@ static BOOL _isPoping;
     
     [HttpRequest findAllDeviceFromServer:^(AFHTTPRequestOperation *operation, id responseObject)
     {
-        NSLog(@"9999999999%@",responseObject);
+        //NSLog(@"%@",responseObject);
         //请求成功
         JYFurnitureBackStatus *furnitureBackStatus=[JYFurnitureBackStatus statusWithDict:responseObject];
         self.furnitureBackStatus=furnitureBackStatus;
@@ -839,7 +832,7 @@ static BOOL _isPoping;
     {
         //按顺序取出从服务器返回的电器
         JYFurnitureBack *furnitureBack = self.furnitureBackStatus.furnitureArray[i];
-        NSLog(@"从服务器返回电器的区域和名称:%@ %@",furnitureBack.scene_name,furnitureBack.name);
+        //NSLog(@"从服务器返回电器的区域和名称:%@ %@",furnitureBack.scene_name,furnitureBack.name);
         //遍历头部区域数组
         int j = 0;
         for(j = 0; j < self.headerArray.count; j++)
@@ -867,16 +860,11 @@ static BOOL _isPoping;
                         if([furniture.deviceType isEqualToString:@"40"])
                         {
                             YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];
-                            //vc.logic_id=furniture.logic_id;
-                           // vc.furnitureName=furniture.descLabel;
                             furniture.controller=vc;
                         }
                         else if([furniture.deviceType isEqualToString:@"41"])
                         {
-                            //furniture.controller = [[DLLampControllYWModeViewController alloc]init];
                             YSYWPatternViewController *vc=[[YSYWPatternViewController alloc]init];
-                            //vc.logic_id=furniture.logic_id;
-                            //vc.furnitureName=furniture.descLabel;
                             furniture.controller=vc;
                             
                         }
@@ -901,16 +889,12 @@ static BOOL _isPoping;
                     {
                         furniture.imageStr = self.imageHighArray[3];
                         YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];
-                       // vc.logic_id=furniture.logic_id;
-                       // vc.furnitureName=furniture.descLabel;
                         furniture.controller=vc;
                     }
                     else if([furniture.deviceType isEqualToString:@"41"])
                     {
                         furniture.imageStr=self.imageHighArray[4];
                         YSYWPatternViewController *vc=[[YSYWPatternViewController alloc]init];
-                       // vc.logic_id=furniture.logic_id;
-                        //vc.furnitureName=furniture.descLabel;
                         furniture.controller=vc;
 
                     }
@@ -937,7 +921,6 @@ static BOOL _isPoping;
         //电器的所属区域不存在于已有头部电器数组
         if(j>=self.headerArray.count)
         {
-            NSLog(@"电器的所属区域不存在于已有头部数组");
            // NSLog(@"电器的所属区域不存在于已有的头部电器数组：%@",furnitureBack.scene_name);
             if([furnitureBack.scene_name isEqualToString:@"-1"])
             {
@@ -1001,8 +984,8 @@ static BOOL _isPoping;
                         break;
                     }
                 }
-                NSLog(@"看看这个m：%d",m);
-                NSLog(@"看看这个电器%@ %d",furniture.descLabel,furniture.registed);
+//                NSLog(@"看看这个m：%d",m);
+//                NSLog(@"看看这个电器%@ %d",furniture.descLabel,furniture.registed);
                
                 //初始化一个智能区域
                 JYFurnitureSection *furnitureSection=[[JYFurnitureSection alloc]init];
@@ -1047,7 +1030,6 @@ static BOOL _isPoping;
                         //如果从服务器返回的电器与已有电器描述一致
                         if([furnitureBack.name isEqualToString:self.descArray[k]])
                         {
-                            NSLog(@"难道没有一致吗?");
                             //那就从self.furnitureSecArray中找到它
                             JYFurnitureSection *section=[self.furnitureSecArray objectAtIndex:j];
                             JYFurniture *furniture=[section.furnitureArray objectAtIndex:k];
@@ -1059,18 +1041,12 @@ static BOOL _isPoping;
                             if([furniture.deviceType isEqualToString:@"40"])
                             {
                                 YSRGBPatternViewController *vc=[[YSRGBPatternViewController alloc]init];
-                               // vc.logic_id=furniture.logic_id;
-                                //vc.furnitureName=furniture.descLabel;
                                 furniture.controller=vc;
-                                //furniture.controller=[[DLLampControlGuestModeViewController alloc]init];
                             }
                             else if([furniture.deviceType isEqualToString:@"41"])
                             {
                                 YSYWPatternViewController *vc=[[YSYWPatternViewController alloc]init];
-                               // vc.logic_id=furniture.logic_id;
-                                //vc.furnitureName=furniture.descLabel;
                                 furniture.controller=vc;
-                                // furniture.controller=[[DLLampControllYWModeViewController alloc]init];
                             }
                             else
                             {

@@ -103,6 +103,7 @@
     self.tableName=[NSString stringWithFormat:@"sceneTable%@",appDelegate.user_id];
     NSLog(@"看看表名%@",self.tableName);
     NSLog(@"看看区域名称传过来没%@",self.sectionName);
+    NSLog(@"看看逻辑ID传递过来没啊%@",self.logic_id);
     
     //查看当前区域下有哪些电器
     for(int i=0;i < self.furnitureArray.count;i++)
@@ -184,7 +185,6 @@
 {
     if(self.tag_Back==2)
     {
-        NSLog(@"???/????");
         //初始化默认模型数据
         [self initPatternData];
         //初始化scrollView
@@ -246,12 +246,14 @@
     //创建表（如果已经存在时不会再创建的）
     [self.jySceneSqlite createTable:self.tableName];
     
-    //获取表中指定逻辑id的所有记录
-    [self.jySceneSqlite getAllRecordFromTable:self.tableName ByArea:self.sectionName];
+    //指定区域指定逻辑ID下的所有数据
+    [self.jySceneSqlite getAllRecordFromTable:self.tableName ByArea:self.sectionName ByLogicID:self.logic_id];
+    //[self.jySceneSqlite getAllRecordFromTable:self.tableName ByArea:self.sectionName];
     
+    //缓存中还没有该电器的相关场景数据
     if(self.jySceneSqlite.patterns.count == 0)
     {
-        NSLog(@"刚开始进来数据库没有数据的");
+        NSLog(@"刚开始进来数据库没有该电器的场景数据,从服务器获取");
         NSLog(@"走的是家居");
         //1.创建请求管理对象
         AFHTTPRequestOperationManager *mgr = [AFHTTPRequestOperationManager manager];
@@ -375,6 +377,7 @@
     else
     {
         NSLog(@"数据库已经有数据");
+        [self.jySceneSqlite getAllRecordFromTable:self.tableName ByArea:self.sectionName];
         self.scenes = self.jySceneSqlite.patterns;
         self.scenesOnly=self.jySceneSqlite.scenesOnly;
         
@@ -388,12 +391,6 @@
         {
             JYSceneOnly *scene=self.scenesOnly[i];
             NSLog(@"%@ %@ %@",scene.name,scene.area,scene.bkgName);
-        }
-        
-        for(int i = 0; i < self.scenes.count;i++)
-        {
-            YSScene *scene = self.scenes[i];
-            NSLog(@"为什么呢？%@ %@ %@ %@ %@ %@ %@",scene.logic_id,scene.type,scene.name, scene.bkgName,scene.param1,scene.param2,scene.param3);
         }
         
         for(int i = 0; i < self.scenesOnly.count; i++)

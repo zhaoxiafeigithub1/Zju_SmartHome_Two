@@ -30,6 +30,8 @@
 //根据区域，获取该区域下的所有数据
 -(void)getAllRecordFromTable:(NSString *)tableName ByArea:(NSString *)area;
 
+//根据区域和逻辑ID,获取该条件下的所有数据
+-(void)getAllRecordFromTable:(NSString *)tableName ByArea:(NSString *)area ByLogicID:(NSString *)logic_id;
 
 //插入数据的方法
 -(void)insertRecordIntoTableName:(NSString *)tableName

@@ -144,11 +144,17 @@
  */
 -(void)start
 {
-    //显示状态栏
-    [UIApplication sharedApplication].statusBarHidden=NO;
-    
     //切换窗口的根控制器
-    self.view.window.rootViewController=[[JYLoginViewController alloc]init];
+    JYLoginViewController *loginVc=[[JYLoginViewController alloc]init];
+    self.view.window.rootViewController=loginVc;
+    loginVc.view.alpha=0.3;
+    [UIView animateWithDuration:1.0 animations:^{
+        loginVc.view.alpha=1.0;
+    }completion:^(BOOL finished) {
+        //显示状态栏
+        [UIApplication sharedApplication].statusBarHidden=NO;
+    }];
+    
 }
 -(void)checkboxClick:(UIButton *)checkbox
 {

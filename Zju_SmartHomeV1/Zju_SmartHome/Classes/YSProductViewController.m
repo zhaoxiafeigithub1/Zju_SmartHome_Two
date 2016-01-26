@@ -372,7 +372,7 @@ static BOOL _isPoping;
                          NSString *string=[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding];
                         if([string isEqualToString:@"302"])
                         {
-                            [MBProgressHUD showError:@"此电器在其他模块已经存在，请先删除再添加"];
+                            [MBProgressHUD showError:@"此设备已经存在"];
                          }
                           else
                           {
