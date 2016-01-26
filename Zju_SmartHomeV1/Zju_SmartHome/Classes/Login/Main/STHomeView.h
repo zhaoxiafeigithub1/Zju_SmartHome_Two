@@ -29,6 +29,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *headerView;
 
 @property(nonatomic,weak)id<STHomeViewDelegate> delegate;
+@property (weak, nonatomic) IBOutlet UILabel *weatherLabel;
 
 +(instancetype)initWithHomeView;
 @end
