@@ -255,7 +255,6 @@
                  {
                      JYPattern *pattern=backStatus.patternArray[i];
                      NSLog(@"%@ %@ %@ %@ %@ %@ %@",pattern.logic_id,pattern.name,pattern.logoName, pattern.bkgName,pattern.param1,pattern.param2,pattern.param3);
-                     NSLog(@"&&&&& 7777 :%@",pattern.name);
                      if([pattern.name isEqualToString:@"R"]||[pattern.name isEqualToString:@"G"]||[pattern.name isEqualToString:@"B"])
                      {
                          NSLog(@"是RGB中的一种吧");

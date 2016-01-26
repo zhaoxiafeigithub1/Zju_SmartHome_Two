@@ -311,7 +311,6 @@
                          NSLog(@"lalalalal");
                          if(![pattern.bkgName isEqualToString:@"rouhe_bg"])
                          {
-                             NSLog(@"yayayayay");
                              //做加载图片
                              NSLog(@"http://60.12.220.16:8888/paladin/Static/images/protrait/%@, %@",pattern.bkgName, pattern.bkgName);
                              
