@@ -55,5 +55,11 @@
 //根据区域,场景名称和电器逻辑id删除指定场景下的电器
 + (void)deleteSceneFromServer:(NSString*)logicId andWithSceneName:(NSString *)sceneName withArea:(NSString *)area success:(void(^)(AFHTTPRequestOperation *operation, id responseObject))success failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error))failure;
     
+//RGB的三种跳跃模式
++(void)sendJumpToReserve:(NSString *)logicID redValue:(NSString*)redValue greenValue:(NSString*)greenValue blueValue:(NSString*)blueValue success:(void(^)(AFHTTPRequestOperation *operation, id responseObject))success failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error))failure;
++(void)sendRGBColorToServerByZhao:(NSString *)logicId redValue:(NSString *)redValue greenValue:(NSString *)greenValue blueValue:(NSString *)blueValue success:(void (^)(AFHTTPRequestOperation * operation, id responseObject))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
++(void)sendRGBColorToServerByJumpThree:(NSString *)logicId redValue:(NSString *)redValue greenValue:(NSString *)greenValue blueValue:(NSString *)blueValue success:(void (^)(AFHTTPRequestOperation * operation, id responseObject))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
+//YW的三种模式,舒适,柔和,明亮
++ (void)sendYWWarmColdToServer:(NSString *)logicId warmcoldValue:(NSString*)warmcoldValue actionString:(NSString *)actionString success:(void(^)(AFHTTPRequestOperation *operation, id responseObject))success failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error))failure;
 
 @end

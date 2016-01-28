@@ -52,6 +52,11 @@
 //有关照片取色的属性；
 @property (strong, nonatomic) UIPopoverController *imagePickerPopover;
 @property (nonatomic,strong) UIAlertController *alert;
+@property(nonatomic,strong)NSMutableArray *tempArray1;
+//@property(nonatomic,assign)NSInteger count;
+@property(nonatomic,strong)NSTimer *timer1;
+@property(nonatomic,strong)NSTimer *timer2;
+@property(nonatomic,strong)NSMutableArray *tempArray2;
 - (IBAction)photoClick1:(id)sender;
 
 @end
@@ -62,14 +67,17 @@
 {
   [super viewDidLoad];
     NSLog(@"看看YW区域有没有过来:%@",self.area);
-  
+    self.tempArray1 = [NSMutableArray array];
+    self.tempArray2 = [NSMutableArray array];
+    
+    self.timer1 = [NSTimer scheduledTimerWithTimeInterval:0.5  target:self selector:@selector(handleTimer1Action) userInfo:nil repeats:YES];
+    [self.timer1 setFireDate:[NSDate distantFuture]];
+    self.timer2 = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(handleTimer2Action) userInfo:nil repeats:YES];
+    [self.timer2 setFireDate:[NSDate distantFuture]];
   self.tag=1;
   self.switchTag = 1;
- 
-    
   //设置导航栏
   [self setNavigationBar];
-    
   UIImageView *imgView = [[UIImageView alloc]init];
   imgView.tag = 10086;
   UIView *viewColorPickerPositionIndicator = [[UIView alloc]init];
@@ -85,7 +93,7 @@
     self.mySlider.maximumValue = 100;
     
     // 为UISlider添加事件方法
-    [self.mySlider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.mySlider addTarget:self action:@selector(handleYWSlider1Action:) forControlEvents:UIControlEventValueChanged];
     _mySlider.minimumTrackTintColor = [UIColor clearColor];
     _mySlider.maximumTrackTintColor = [UIColor clearColor];
     [_mySlider setThumbImage:[UIImage imageNamed:@"point"] forState:UIControlStateNormal];
@@ -103,7 +111,7 @@
     self.mySlider2.maximumValue = 100;
     
     // 为UISlider添加事件方法
-    [self.mySlider2 addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.mySlider2 addTarget:self action:@selector(handleYWSlider2Action:) forControlEvents:UIControlEventValueChanged];
     _mySlider2.minimumTrackTintColor = [UIColor clearColor];
     _mySlider2.maximumTrackTintColor = [UIColor clearColor];
     [_mySlider2 setThumbImage:[UIImage imageNamed:@"point"] forState:UIControlStateNormal];
@@ -111,6 +119,10 @@
     _mySlider2.layer.cornerRadius=4;
     _mySlider2.layer.masksToBounds=YES;
     [self.view addSubview:self.mySlider2];
+    _mySlider.value = 100;
+    //KVO监听滑杆1和滑杆2的值得改变
+    [_mySlider addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
+    [_mySlider2 addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
   
   if (fabs(([[UIScreen mainScreen] bounds].size.height - 568)) < 1){
     // 5 & 5s & 5c
@@ -159,7 +171,58 @@
   [self.panelView addSubview:btnPlay];
   
 }
-
+//timer1对应的事件
+-(void)handleTimer1Action
+{
+    [HttpRequest sendYWBrightnessToServer:self.logic_id brightnessValue:[NSString stringWithFormat:@"%f",self.mySlider.value] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"发送的亮度值为%f",self.mySlider.value);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [MBProgressHUD showError:@"检查网关"];
+    }];
+}
+//timer2对应的事件
+-(void)handleTimer2Action
+{
+    [HttpRequest sendYWWarmColdToServer:self.logic_id warmcoldValue:[NSString stringWithFormat:@"%f",self.mySlider2.value] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"发送的YW冷暖值为:%f",self.mySlider2.value);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+    }];
+}
+//视图消失时注销两个计时器
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [self.timer1 invalidate];
+    self.timer1 = nil;
+    [self.timer2 invalidate];
+    self.timer2 = nil;
+    [self.mySlider removeObserver:self forKeyPath:@"value"];
+    [self.mySlider2 removeObserver:self forKeyPath:@"value"];
+    
+}
+//KVO监听到值得改变时对应的事件
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if (object == _mySlider) {
+        [self.timer1 setFireDate:[NSDate distantPast]];
+        [self.timer2 setFireDate:[NSDate distantFuture]];
+    }
+    if (object == _mySlider2) {
+        [self.timer2 setFireDate:[NSDate distantPast]];
+        [self.timer1 setFireDate:[NSDate distantFuture]];
+    }
+    
+}
+//滑杆1对应的事件
+-(void)handleYWSlider1Action:(UISlider *)sender
+{
+    
+}
+//滑杆2对应的事件
+-(void)handleYWSlider2Action:(UISlider *)sender
+{
+    
+}
 //-(void)sliderValueChanged{
 //    self.LDValue.text = [NSString stringWithFormat:@"%d", (int)self.slider.value ];
 //    NSLog(@"＝＝＝%f",self.slider.value);

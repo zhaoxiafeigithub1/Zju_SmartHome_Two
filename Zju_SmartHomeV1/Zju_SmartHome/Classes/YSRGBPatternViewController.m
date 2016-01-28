@@ -585,7 +585,11 @@
         image.tag = i - 2;
         view.tag = i -2;
         [image setUserInteractionEnabled:YES];
-        
+        if (image.tag == 3) {
+            UILongPressGestureRecognizer *longPressG = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(handleLongPressGesture:)];
+            [image addGestureRecognizer:longPressG];
+            
+        }
         //添加按钮添加触摸手势
         if (i == self.patterns.count + 1)
         {
@@ -598,7 +602,13 @@
             //添加点击手势
             UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(patternTapGestureEvent:)];
             [image addGestureRecognizer:tap];
-            
+            if (image.tag == 3) {
+                UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleDoubleGesture:)];
+                doubleTap.numberOfTapsRequired = 2;
+                [image addGestureRecognizer:doubleTap];
+                [tap requireGestureRecognizerToFail:doubleTap];
+            }
+
             //添加向上滑手势
             UISwipeGestureRecognizer *swipeGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeToDeletePattern:)];
             [swipeGesture setDirection:UISwipeGestureRecognizerDirectionUp];
@@ -627,7 +637,28 @@
     //设置背景颜色和文字
     [self updateCellBackground:2];
 }
-
+//长按手势
+-(void)handleLongPressGesture:(UILongPressGestureRecognizer *)sender
+{
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        [HttpRequest sendRGBColorToServerByJumpThree:self.logic_id redValue:@"1" greenValue:@"2" blueValue:@"3" success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            
+        }];
+        NSLog(@"4546546");
+        
+    }
+}
+//双击操作
+-(void)handleDoubleGesture:(UITapGestureRecognizer *)sender
+{
+    [HttpRequest sendRGBColorToServerByZhao:self.logic_id redValue:@"1" greenValue:@"2" blueValue:@"3" success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError * error) {
+        [MBProgressHUD showError:@"请检查网关"];
+    }];
+}
 //添加按钮的添加模式事件
 - (void)addTapGestureEvent:(UIGestureRecognizer *)gr
 {
@@ -1168,58 +1199,66 @@
     }
     else if([pattern.name isEqualToString:@"跳跃"])
     {
-        [HttpRequest sendRGBColorToServer:self.logic_id redValue:r greenValue:g blueValue:b
-                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
-         {
-             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-             NSLog(@"%@",string);
-         }
-                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
-         {
-             [MBProgressHUD showError:@"请检查网关"];
-         }];
-        
-        [HttpRequest sendRGBColorToServer:self.logic_id redValue:@"255" greenValue:@"0" blueValue:@"0"
-                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
-         {
-             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-             NSLog(@"%@",string);
-         }
-                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
-         {
-             [MBProgressHUD showError:@"请检查网关"];
-         }];
-        
-        [HttpRequest sendRGBColorToServer:self.logic_id redValue:@"0" greenValue:@"255" blueValue:@"0"
-                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
-         {
-             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-             NSLog(@"%@",string);
-         }
-                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
-         {
-             [MBProgressHUD showError:@"请检查网关"];
-         }];
-        [HttpRequest sendRGBColorToServer:self.logic_id redValue:@"0" greenValue:@"0" blueValue:@"255"
-                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
-         {
-             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-             NSLog(@"%@",string);
-         }
-                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
-         {
-             [MBProgressHUD showError:@"请检查网关"];
-         }];
-        [HttpRequest sendRGBColorToServer:self.logic_id redValue:@"100" greenValue:@"200" blueValue:@"200"
-                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
-         {
-             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-             NSLog(@"%@",string);
-         }
-                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
-         {
-             [MBProgressHUD showError:@"请检查网关"];
-         }];
+        [HttpRequest sendJumpToReserve:self.logic_id redValue:r  greenValue:g blueValue:b success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSLog(@"%@----%@-----%@",r,g,b);
+            NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+            NSLog(@"%@",string);
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            [MBProgressHUD showError:@"请检查网关"];
+        }];
+
+//        [HttpRequest sendRGBColorToServer:self.logic_id redValue:r greenValue:g blueValue:b
+//                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
+//         {
+//             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+//             NSLog(@"%@",string);
+//         }
+//                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
+//         {
+//             [MBProgressHUD showError:@"请检查网关"];
+//         }];
+//        
+//        [HttpRequest sendRGBColorToServer:self.logic_id redValue:@"255" greenValue:@"0" blueValue:@"0"
+//                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
+//         {
+//             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+//             NSLog(@"%@",string);
+//         }
+//                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
+//         {
+//             [MBProgressHUD showError:@"请检查网关"];
+//         }];
+//        
+//        [HttpRequest sendRGBColorToServer:self.logic_id redValue:@"0" greenValue:@"255" blueValue:@"0"
+//                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
+//         {
+//             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+//             NSLog(@"%@",string);
+//         }
+//                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
+//         {
+//             [MBProgressHUD showError:@"请检查网关"];
+//         }];
+//        [HttpRequest sendRGBColorToServer:self.logic_id redValue:@"0" greenValue:@"0" blueValue:@"255"
+//                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
+//         {
+//             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+//             NSLog(@"%@",string);
+//         }
+//                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
+//         {
+//             [MBProgressHUD showError:@"请检查网关"];
+//         }];
+//        [HttpRequest sendRGBColorToServer:self.logic_id redValue:@"100" greenValue:@"200" blueValue:@"200"
+//                                  success:^(AFHTTPRequestOperation *operation, id responseObject)
+//         {
+//             NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+//             NSLog(@"%@",string);
+//         }
+//                                  failure:^(AFHTTPRequestOperation *operation, NSError *error)
+//         {
+//             [MBProgressHUD showError:@"请检查网关"];
+//         }];
     }
     else
     {

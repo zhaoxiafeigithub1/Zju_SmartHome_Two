@@ -49,6 +49,11 @@
 @property (nonatomic,strong) UIAlertController *alert;
 
 @property(nonatomic,strong)STNewSceneView *sceneView;
+@property(nonatomic,strong)NSTimer *timer;
+@property(nonatomic,strong)NSMutableArray *tempArray;
+@property(nonatomic,assign)NSInteger count;
+@property(nonatomic,strong)NSTimer *timer1;
+@property(nonatomic,strong)NSMutableArray *tempArray1;
 @end
 
 @implementation DLLampControlRGBModeViewController
@@ -57,13 +62,81 @@
 {
   [super viewDidLoad];
     NSLog(@"看看区域有没有从模式界面传到自定义界面: %@",self.area);
-    
+    self.tempArray = [NSMutableArray array];
+    self.tempArray1 = [NSMutableArray array];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5  target:self selector:@selector(slider2ToHandleRGBColorWithLogicID) userInfo:nil repeats:YES];
+    self.timer1 = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(beginRequestPostAsynWithLogigID) userInfo:nil repeats:YES];
+    [self.timer1 setFireDate:[NSDate distantFuture]];
+    [self.timer setFireDate:[NSDate distantFuture]];
     self.view.backgroundColor=[UIColor blackColor];
    //设置导航条
   [self setNavigationBar];
    //进行初始化
   [self initView];
 }
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [self.timer invalidate];
+    self.timer = nil;
+    [self.timer1 invalidate];
+    self.timer1 = nil;
+    [self.mySlider removeObserver:self forKeyPath:@"value"];
+    [self.mySlider2 removeObserver:self forKeyPath:@"value"];
+    
+}
+//滑杆1控制RGB灯的开关亮度
+-(void)beginRequestPostAsynWithLogigID
+{
+    [HttpRequest sendRGBBrightnessToServer:self.logic_id brightnessValue:[NSString stringWithFormat:@"%f",self.mySlider.value] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"发送的RGB亮度为%f",self.mySlider.value);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [MBProgressHUD showError:@"检查网关"];
+    }];
+    [self.tempArray1 addObject:@(self.mySlider.value)];
+    if (self.tempArray1.count == 10) {
+        if ([self.tempArray1.firstObject isEqualToNumber:self.tempArray1.lastObject] && [self.tempArray1.firstObject isEqualToNumber:self.tempArray1[5]]) {
+            [self.timer1 setFireDate:[NSDate distantFuture]];
+        }
+        [self.tempArray1 removeAllObjects];
+    }
+    
+}
+
+//滑杆2控制RGB的黄白变化
+-(void)slider2ToHandleRGBColorWithLogicID
+{
+    CGFloat scale = self.mySlider2.value / 100;
+    NSString *rcolor = [NSString stringWithFormat:@"%x",(int)(255 - 183 * scale)];
+    NSString *gcolor = [NSString stringWithFormat:@"%x",255];
+    NSString *bcolor = [NSString stringWithFormat:@"%x",(int)(10 + 95 * scale)];
+   [HttpRequest sendRGBColorToServer:self.logic_id redValue:rcolor greenValue:gcolor blueValue:bcolor success:^(AFHTTPRequestOperation *operation, id responseObject) {
+       NSLog(@"发送的RGB三色值分别为:%@---%@---%@",rcolor,gcolor,bcolor);
+   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+       [MBProgressHUD showError:@"请检查网关"];
+   }];
+    //NSLog(@"-------%f",self.mySlider2.value);
+    [self.tempArray addObject:@(self.mySlider2.value)];
+    if (self.tempArray.count == 10) {
+        if ([self.tempArray.firstObject isEqualToNumber:self.tempArray.lastObject] && [self.tempArray.firstObject isEqualToNumber:self.tempArray[5]]) {
+            [self.timer setFireDate:[NSDate distantFuture]];
+        }
+        [self.tempArray removeAllObjects];
+    }
+}
+//KVO对应的事件
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    NSLog(@"%@",change);
+    if (object == _mySlider2) {
+        [self.timer1 setFireDate:[NSDate distantFuture]];
+        [self.timer setFireDate:[NSDate distantPast]];
+    }
+    if (object == _mySlider) {
+        [self.timer setFireDate:[NSDate distantFuture]];
+        [self.timer1 setFireDate:[NSDate distantPast]];
+    }
+}
+
 
 /**
  *  判断点触位置，如果点触位置在颜色区域内的话，才返回点触的控件为UIImageView *imgView
@@ -116,6 +189,8 @@
                                        smallRadius:imgView.frame.size.width * 0.40
                                        targetPoint:touchLocation];
   if (pointInRound) {
+      [self.timer setFireDate:[NSDate distantFuture]];
+      [self.timer1 setFireDate:[NSDate distantFuture]];
     UIImageView *colorImageView = (UIImageView *)[self.view viewWithTag:10086];
     UIView *viewColorPickerPositionIndicator = (UIView *)[self.view viewWithTag:10087];
     UITouch *touch = touches.anyObject;
@@ -609,7 +684,7 @@
     self.mySlider.maximumValue = 100;
     
     // 为UISlider添加事件方法
-    [self.mySlider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.mySlider addTarget:self action:@selector(handleRGBSlider1ChangeAction:) forControlEvents:UIControlEventValueChanged];
     _mySlider.minimumTrackTintColor = [UIColor clearColor];
     _mySlider.maximumTrackTintColor = [UIColor clearColor];
     [_mySlider setThumbImage:[UIImage imageNamed:@"point"] forState:UIControlStateNormal];
@@ -627,7 +702,7 @@
     self.mySlider2.maximumValue = 100;
     
     // 为UISlider添加事件方法
-    [self.mySlider2 addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.mySlider2 addTarget:self action:@selector(handleRGBSlider2ChangeAction:) forControlEvents:UIControlEventValueChanged];
     _mySlider2.minimumTrackTintColor = [UIColor clearColor];
     _mySlider2.maximumTrackTintColor = [UIColor clearColor];
     [_mySlider2 setThumbImage:[UIImage imageNamed:@"point"] forState:UIControlStateNormal];
@@ -635,7 +710,10 @@
     _mySlider2.layer.cornerRadius=4;
     _mySlider2.layer.masksToBounds=YES;
     [self.view addSubview:self.mySlider2];
+    //KVO监听滑杆1和2的值得改变
+    [_mySlider2 addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
     
+    [_mySlider addObserver:self forKeyPath:@"value" options:NSKeyValueObservingOptionNew context:nil];
     
     if (fabs(([[UIScreen mainScreen] bounds].size.height - 480)) < 1) {
         // 4 & 4s
@@ -781,38 +859,46 @@
          }];
     }
 }
-
-
-- (void)sliderValueChanged:(id)sender
+//滑杆1对应的事件
+-(void)handleRGBSlider1ChangeAction:(UISlider *)sender
 {
-    if ([sender isKindOfClass:[UISlider class]])
-    {
-        UISlider * slider = (UISlider *)sender;
-        if(fabs(slider.value-self.temp)>=8)
-        {
-            if(slider.value<=8)
-            {
-                slider.value=0;
-            }
-            else if(slider.value>=92)
-            {
-                slider.value=100;
-            }
-            self.temp=(int)slider.value;
-            
-            [HttpRequest sendRGBBrightnessToServer:self.logic_id brightnessValue:[NSString stringWithFormat:@"%d", (int)slider.value]
-                                           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                                               
-                                               NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-                                               NSLog(@"成功: %@", string);
-                                           }
-                                           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                               NSLog(@"失败: %@", error);
-                                               [MBProgressHUD showError:@"请检查网关"];
-                                           }];
-        }
-        
-    }
+    
 }
+//滑杆2对应点的事件
+-(void)handleRGBSlider2ChangeAction:(UISlider *)sender
+{
+
+}
+//- (void)sliderValueChanged:(id)sender
+//{
+//    if ([sender isKindOfClass:[UISlider class]])
+//    {
+//        UISlider * slider = (UISlider *)sender;
+//        if(fabs(slider.value-self.temp)>=8)
+//        {
+//            if(slider.value<=8)
+//            {
+//                slider.value=0;
+//            }
+//            else if(slider.value>=92)
+//            {
+//                slider.value=100;
+//            }
+//            self.temp=(int)slider.value;
+//            
+//            [HttpRequest sendRGBBrightnessToServer:self.logic_id brightnessValue:[NSString stringWithFormat:@"%d", (int)slider.value]
+//                                           success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//                                               
+//                                               NSString *string = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+//                                               NSLog(@"成功: %@", string);
+//                                           }
+//                                           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//                                               NSLog(@"失败: %@", error);
+//                                               [MBProgressHUD showError:@"请检查网关"];
+//                                           }];
+//        }
+//        
+//    }
+//}
 
 @end

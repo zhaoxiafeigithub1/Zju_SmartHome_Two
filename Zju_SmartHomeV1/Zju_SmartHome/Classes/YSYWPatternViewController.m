@@ -76,7 +76,7 @@
 @property CGRect musicPreFrame;
 @property CGRect musicNextFrame;
 @property CGRect musicPlayFrame;
-
+@property(nonatomic,strong)NSMutableArray *actionArray;
 @end
 
 @implementation YSYWPatternViewController
@@ -85,6 +85,7 @@
 {
     [super viewDidLoad];
      NSLog(@"看看是从哪里进到这个模式界面：%@",self.room_name);
+    self.actionArray = [NSMutableArray arrayWithObjects:@"awarm",@"normal",@"acold", @"cold_to_warm",nil];
     AppDelegate *appDelegate=(AppDelegate *)[[UIApplication sharedApplication]delegate];
     //专门存储模式的表
     self.tableName=[NSString stringWithFormat:@"patternTable%@",appDelegate.user_id];
@@ -1100,6 +1101,7 @@
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
     //根据居中的选项更新背景和文字
+    if (self.selectedIndex < self.actionArray.count ){
     [self updateCellBackground:(int)self.selectedIndex];
     [self.scrollView setUserInteractionEnabled:YES];
     
@@ -1109,14 +1111,13 @@
     // int param2=[pattern.param2 intValue];
     
     
-    [HttpRequest sendYWWarmColdToServer:self.logic_id warmcoldValue:[NSString stringWithFormat:@"%d", 100-param1] success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
+    [HttpRequest sendYWWarmColdToServer:self.logic_id warmcoldValue:[NSString stringWithFormat:@"%d",100 - param1] actionString:self.actionArray[self.selectedIndex] success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSString *result = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         NSLog(@"YW冷暖返回成功：%@",result);
-        
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"YW冷暖返回失败：%@",error);
     }];
+    }
 }
 
 //计算位置，居中选中的cell

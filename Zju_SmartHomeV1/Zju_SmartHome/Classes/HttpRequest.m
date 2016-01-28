@@ -369,7 +369,7 @@
   }else{
     
     //外网；
-    [manager POST:@"http://ike1.eurzhuoxin.science:8000/iosphone/yw_light.php"
+    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/iosphone/yw_light.php"
        parameters:parameters
           success:success
           failure:failure];
@@ -413,7 +413,7 @@
           failure:failure];
   }else{
     //外网；
-    [manager POST:@"http://ike1.eurzhuoxin.science:8000/iosphone/yw_light.php"
+    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/iosphone/yw_light.php"
        parameters:parameters
           success:success
           failure:failure];
@@ -460,7 +460,7 @@
   }else{
     
     //外网
-    [manager POST:@"http://ike1.eurzhuoxin.science:8000/iosphone/yw_light.php"
+    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/iosphone/yw_light.php"
        parameters:parameters
           success:success
           failure:failure];
@@ -506,7 +506,7 @@
   }else{
     
     //外网
-    [manager POST:@"http://ike1.eurzhuoxin.science:8000/iosphone/color_light.php"
+    [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/iosphone/color_light.php"
        parameters:parameters
           success:success
           failure:failure];
@@ -514,6 +514,174 @@
   }
   
 }
+//RGB第一种跳跃模式
++(void)sendJumpToReserve:(NSString *)logicID redValue:(NSString*)redValue greenValue:(NSString*)greenValue blueValue:(NSString*)blueValue success:(void (^)(AFHTTPRequestOperation *, id))success failure:(void (^)(AFHTTPRequestOperation *, NSError *))failure
+{
+    AFSecurityPolicy *securityPolicy = [[AFSecurityPolicy alloc] init];
+    [securityPolicy setAllowInvalidCertificates:YES];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager setSecurityPolicy:securityPolicy];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    NSString *str = [[NSString alloc] initWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                     "<root>"
+                     "<command_id></command_id>"
+                     "<command_type>execute</command_type>"
+                     "<id>%@</id>"
+                     "<action>mutation_slow</action>"
+                     "<value>%@,%@,%@</value>"
+                     "</root>",  logicID,redValue,greenValue,blueValue];
+    
+    NSDictionary *parameters = @{@"test" : str};
+    
+    AppDelegate *app = [[UIApplication sharedApplication] delegate];
+    
+    if (app.isInternalNetworkGate) {
+        //内网
+        
+        [manager POST:[[NSString alloc] initWithFormat:@"http://%@/phone/color_light.php",app.globalInternalIP]
+           parameters:parameters
+              success:success
+              failure:failure];
+        
+    }else{
+        
+        //外网
+        [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/iosphone/color_light.php"
+           parameters:parameters
+              success:success
+              failure:failure];
+        
+    }
+    
+    
+}
+//RGB第二种跳跃模式
++(void)sendRGBColorToServerByZhao:(NSString *)logicId redValue:(NSString *)redValue greenValue:(NSString *)greenValue blueValue:(NSString *)blueValue success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError * error))failure
+{
+    AFSecurityPolicy *securityPolicy = [[AFSecurityPolicy alloc] init];
+    [securityPolicy setAllowInvalidCertificates:YES];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager setSecurityPolicy:securityPolicy];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    NSString *str = [[NSString alloc] initWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                     "<root>"
+                     "<command_id></command_id>"
+                     "<command_type>execute</command_type>"
+                     "<id>%@</id>"
+                     "<action>gradual_model</action>"
+                     "<value>%@,%@,%@</value>"
+                     "</root>", logicId,redValue,greenValue,blueValue];
+    
+    NSDictionary *parameters = @{@"test" : str};
+    
+    AppDelegate *app = [[UIApplication sharedApplication] delegate];
+    
+    if (app.isInternalNetworkGate) {
+        //内网
+        
+        [manager POST:[[NSString alloc] initWithFormat:@"http://%@/phone/color_light.php",app.globalInternalIP]
+           parameters:parameters
+              success:success
+              failure:failure];
+        
+    }else{
+        
+        //外网
+        [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/iosphone/color_light.php"
+           parameters:parameters
+              success:success
+              failure:failure];
+        
+    }
+    
+}
+//RGB第三种跳跃模式
++(void)sendRGBColorToServerByJumpThree:(NSString *)logicId redValue:(NSString *)redValue greenValue:(NSString *)greenValue blueValue:(NSString *)blueValue success:(void (^)(AFHTTPRequestOperation * operation, id responseObject))success failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    AFSecurityPolicy *securityPolicy = [[AFSecurityPolicy alloc] init];
+    [securityPolicy setAllowInvalidCertificates:YES];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager setSecurityPolicy:securityPolicy];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    NSString *str = [[NSString alloc] initWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                     "<root>"
+                     "<command_id></command_id>"
+                     "<command_type>execute</command_type>"
+                     "<id>%@</id>"
+                     "<action>gradual</action>"
+                     "<value>%@,%@,%@</value>"
+                     "</root>", logicId,redValue,greenValue,blueValue];
+    
+    NSDictionary *parameters = @{@"test" : str};
+    
+    AppDelegate *app = [[UIApplication sharedApplication] delegate];
+    
+    if (app.isInternalNetworkGate) {
+        //内网
+        
+        [manager POST:[[NSString alloc] initWithFormat:@"http://%@/phone/color_light.php",app.globalInternalIP]
+           parameters:parameters
+              success:success
+              failure:failure];
+        
+    }else{
+        
+        //外网
+        [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/iosphone/color_light.php"
+           parameters:parameters
+              success:success
+              failure:failure];
+        
+    }
+    
+}
+//YW的三种模式,明亮,舒适,柔和
++ (void)sendYWWarmColdToServer:(NSString *)logicId warmcoldValue:(NSString*)warmcoldValue actionString:(NSString *)actionString success:(void(^)(AFHTTPRequestOperation *operation, id responseObject))success failure:(void(^)(AFHTTPRequestOperation * operation, NSError * error))failure
+{
+    //增加这几行代码；
+    AFSecurityPolicy *securityPolicy = [[AFSecurityPolicy alloc] init];
+    [securityPolicy setAllowInvalidCertificates:YES];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager setSecurityPolicy:securityPolicy];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    NSString *str = [[NSString alloc] initWithFormat: @"<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                     "<root>"
+                     "<command_id>10001</command_id>"
+                     "<command_type>execute</command_type>"
+                     "<id>%@</id>"
+                     "<action>%@</action>"
+                     "<value>%@</value>"
+                     "</root>",logicId,actionString,warmcoldValue];
+    
+    
+    NSDictionary *parameters = @{@"test" : str};
+    
+    AppDelegate *app = [[UIApplication sharedApplication] delegate];
+    
+    if (app.isInternalNetworkGate) {
+        //内网；
+        [manager POST:[[NSString alloc] initWithFormat:@"http://%@/phone/yw_light.php",app.globalInternalIP]
+           parameters:parameters
+              success:success
+              failure:failure];
+    }else{
+        
+        //外网；
+        [manager POST:@"http://iphone.ngrok.joyingtec.com:8000/phone/yw_light.php"
+           parameters:parameters
+              success:success
+              failure:failure];
+    }
+}
+
 
 
 @end
